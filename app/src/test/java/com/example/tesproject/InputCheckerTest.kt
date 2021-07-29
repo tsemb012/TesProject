@@ -1,10 +1,14 @@
 package com.example.tesproject
 
+import android.view.Gravity.apply
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.within
+import org.assertj.core.api.SoftAssertions
+import org.assertj.core.internal.bytebuddy.implementation.attribute.AnnotationAppender.Default.apply
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.runner.RunWith
@@ -26,31 +30,66 @@ class InputCheckerTest {
     @Test
     fun isValid() {
         val actual = target.isValid("foo")//メソッド呼び出し。
-        assertThat(actual, `is`(true))//実測値と期待値が一致することを確認。
+
+        assertThat("TOKYO")//AND条件
+            .`as`("TEXT CHECK TOKYO")//テストが失敗した時にこのラベルが表示される。
+            .isEqualTo("TOKYO")
+            .isEqualToIgnoringCase("tokyo")
+            .isNotEqualTo("KYOTO")
+            .isNotBlank
+            .startsWith("TO")
+            .endsWith("OKY")
+            .matches("[A-Z]{5}")
+            .isInstanceOf(String::class.java)
+
+        SoftAssertions().apply{//最後までテストケースを実施して情報を集める場合は、SoftAssertionsを利用する。
+            assertThat("TOKYO")
+                .`as`("TEXT CHECK TOKYO")
+                .isEqualTo("Hokkaido")
+                .isEqualToIgnoringCase("tokyo")
+                .isNotEqualTo("KYOTO")
+                .isNotBlank
+                .startsWith("TO")
+                .endsWith("OKY")
+                .matches("[A-Z]{5}")
+                .isInstanceOf(String::class.java)
+        }
+
+        assertThat(3.13159)//数値のアサーション
+            .isNotZero
+            .isNotNegative
+            .isGreaterThan(3.0)
+            .isLessThanOrEqualTo(4.0)
+            .isBetween(3.0,3.2)
+            .isCloseTo(Math.PI,within(0.001))//円周率から誤差0.001であることを示す。
     }
 
     @Test
     fun isValid_givenLessThan3_returnsFalse(){//２文字では偽が返る。
         val actual = target.isValid("ab")
-        assertThat(actual, `is`(false))
+        //assertThat(actual, `is`(false))
+        assertThat(actual).isFalse
     }
 
     @Test
     fun isValid_givenNumeric_returnTrue(){//３文字の英字のみで真が返る。
         val actual = target.isValid("123")
-        assertThat(actual,`is`(true))
+        //assertThat(actual,`is`(true))
+        assertThat(actual).isTrue
     }
 
     @Test
     fun isValid_givenAlphaNumeric_returnsTrue(){//３文字以上の英字と数字の組み合わせで真が返る。
         val actual = target.isValid("abc123")
-        assertThat(actual,`is`(true))
+        //assertThat(actual,`is`(true))
+        assertThat(actual).isTrue
     }
 
     @Test
     fun isValid_givenInvalidCharacter_returnFalse(){//3文字以上だが半角英数以外の文字が含まれると偽が返る。
         val actual = target.isValid("abc@123")
-        assertThat(actual,`is`(false))
+        //assertThat(actual,`is`(false))
+        assertThat(actual).isFalse
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -61,15 +100,10 @@ class InputCheckerTest {
         target.isValid(null)
     }
 
+
     @Ignore("テスト対象が仮実装なので一時的にスキップ")//Ignoreアノテーションでテストを一時的にスキップ。
     @Test
     fun temporarilySkipThisTest(){
 
     }
-
-
-
-
-
-
 }
