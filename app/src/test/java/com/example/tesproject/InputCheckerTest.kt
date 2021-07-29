@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.junit.Ignore
 
 class InputCheckerTest {
     lateinit var target: InputChecker
@@ -46,6 +47,12 @@ class InputCheckerTest {
         //もし例外メッセージなども詳細に検証したい場合は、AssertJを使用する。
     fun inValid_givenNull_throwsIllegalArgumentException(){
         target.isValid(null)
+    }
+
+    @Ignore("テスト対象が仮実装なので一時的にスキップ")//Ignoreアノテーションでテストを一時的にスキップ。ぎt
+    @Test
+    fun temporarilySkipThisTest(){
+
     }
 
 
