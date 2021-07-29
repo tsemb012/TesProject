@@ -38,7 +38,7 @@ class InputCheckerTest {
             .isNotEqualTo("KYOTO")
             .isNotBlank
             .startsWith("TO")
-            .endsWith("OKY")
+            .endsWith("KYO")
             .matches("[A-Z]{5}")
             .isInstanceOf(String::class.java)
 
@@ -55,13 +55,24 @@ class InputCheckerTest {
                 .isInstanceOf(String::class.java)
         }
 
-        assertThat(3.13159)//数値のアサーション
+        assertThat(3.14159)//数値のアサーション
             .isNotZero
             .isNotNegative
             .isGreaterThan(3.0)
             .isLessThanOrEqualTo(4.0)
             .isBetween(3.0,3.2)
             .isCloseTo(Math.PI,within(0.001))//円周率から誤差0.001であることを示す。
+    }
+
+    @Test
+    fun isValid_second(){//Collectionのアサーション
+        val target = listOf("Giants", "Dodgers", "Athletics")
+        assertThat(target)
+            .hasSize(3)//要素の個数を検証
+            .contains("Dodgers")//要素がリストに含まれているか
+            .containsOnly("Athletics", "Dodgers", "Giants")//順不同で等価な要素のみが含まれている場合にテストが成功する。
+            .containsExactly("Giants", "Dodgers","Athletics")//等価な要素飲みが同じ順序で同じ組み合わせで重複なしに含まれているか。
+            .doesNotContain("Padres")
     }
 
     @Test
@@ -106,4 +117,7 @@ class InputCheckerTest {
     fun temporarilySkipThisTest(){
 
     }
+
+
+
 }
