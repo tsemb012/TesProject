@@ -1,12 +1,11 @@
 package com.example.tesproject
 
 import android.view.Gravity.apply
+import org.assertj.core.api.Assertions.*
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.within
 import org.assertj.core.api.SoftAssertions
 import org.assertj.core.internal.bytebuddy.implementation.attribute.AnnotationAppender.Default.apply
 import org.junit.Assert.*
@@ -65,14 +64,41 @@ class InputCheckerTest {
     }
 
     @Test
-    fun isValid_second(){//Collectionのアサーション
-        val target = listOf("Giants", "Dodgers", "Athletics")
+    fun isValid_second(){
+
+        val target = listOf("Giants", "Dodgers", "Athletics")//Collectionのアサーション
         assertThat(target)
             .hasSize(3)//要素の個数を検証
             .contains("Dodgers")//要素がリストに含まれているか
             .containsOnly("Athletics", "Dodgers", "Giants")//順不同で等価な要素のみが含まれている場合にテストが成功する。
             .containsExactly("Giants", "Dodgers","Athletics")//等価な要素飲みが同じ順序で同じ組み合わせで重複なしに含まれているか。
             .doesNotContain("Padres")
+
+
+        data class BallTeam(val name:String, val city: String, val stadium:String)//コレクションからデータを特定し、アサートする(フィルタリング)
+        val target2 = listOf(
+            BallTeam("Giants", "San Francisco", "AT&T Park"),
+            BallTeam("Dodgers", "Los Angels", "Dodger Stadium"),
+            BallTeam("Angels", "Los Angels", "Angel Stadium"),
+            BallTeam("Athletics", "Oakland", "Oakland Coliseum"),
+            BallTeam("Padres", "San Diego", "Petco Park")
+        )
+        assertThat(target2)
+            .filteredOn{team -> team.city.startsWith("San")}//絞り込み条件を指定
+            .filteredOn{team -> team.city.endsWith("Francisco")}
+            .extracting("name",String::class.java)//name:Stringプロパティのみ取り出し。
+            .containsExactly("Giants")
+
+        assertThat(target2)
+            .filteredOn{team -> team.city == "Los Angels"}
+            .extracting("name", "Stadium")//プロパティを2つ取り出し
+            .containsExactly(
+                tuple("Dodgers","Dodger Stadium"),//
+                tuple("Angels", "Angel Stadium")
+            )
+
+
+
     }
 
     @Test
@@ -110,7 +136,6 @@ class InputCheckerTest {
     fun inValid_givenNull_throwsIllegalArgumentException(){
         target.isValid(null)
     }
-
 
     @Ignore("テスト対象が仮実装なので一時的にスキップ")//Ignoreアノテーションでテストを一時的にスキップ。
     @Test
