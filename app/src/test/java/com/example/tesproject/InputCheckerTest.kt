@@ -40,4 +40,14 @@ class InputCheckerTest {
         assertThat(actual,`is`(true))
     }
 
+    @Test(expected = IllegalArgumentException::class)
+        //同アノテーションを使用した場合、例外がThrowされなければテストケースは失敗となる。
+        //このやり方では、例外が2種類以上Throwされるケースで例外メッセージを元に区別できない。
+        //もし例外メッセージなども詳細に検証したい場合は、AssertJを使用する。
+    fun inValid_givenNull_throwsIllegalArgumentException(){
+        target.isValid(null)
+    }
+
+
+
 }
