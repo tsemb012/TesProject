@@ -12,6 +12,7 @@ import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.lang.RuntimeException
 
 @RunWith(JUnit4::class)
 class InputCheckerTest {
@@ -101,6 +102,16 @@ class InputCheckerTest {
 
     }
 
+    /*
+        @Test
+        fun isValid_exception(){
+            assertThatExceptionOfType(RuntimeException::class.java)
+                .isThrownBy { functionMayThrow() } //例外を出す可能性があるメソッドを指定
+                .withMessage("Aborted!") //詳細なメッセージの検証
+                .withNoCause()//この例外が他の例外経由で送出されていないことを検証。
+        }
+    */
+
     @Test
     fun isValid_givenLessThan3_returnsFalse(){//２文字では偽が返る。
         val actual = target.isValid("ab")
@@ -136,6 +147,7 @@ class InputCheckerTest {
     fun inValid_givenNull_throwsIllegalArgumentException(){
         target.isValid(null)
     }
+
 
     @Ignore("テスト対象が仮実装なので一時的にスキップ")//Ignoreアノテーションでテストを一時的にスキップ。
     @Test
