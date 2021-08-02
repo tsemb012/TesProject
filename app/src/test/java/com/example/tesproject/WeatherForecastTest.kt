@@ -8,9 +8,13 @@ import org.junit.Test
 
 class WeatherForecastTest {
     lateinit var weatherForecast: WeatherForecast
+    lateinit var recorder:MockWeatherRecorder
 
     @Before
     fun setUp() {
+        val satellite = Satellite()
+        recorder = MockWeatherRecorder()//WeatherRecorderの代わりにモックを渡す。
+        weatherForecast = WeatherForecast(satellite, recorder)
     }
 
     @After
@@ -18,6 +22,22 @@ class WeatherForecastTest {
     }
 
     @Test
+    fun recordCurrentWeather_assertCalled(){
+        weatherForecast.recordCurrentWeather()
+
+        val isCalled = recorder.isCalled
+        assertThat(isCalled).isTrue()
+
+        val weather = recorder.weather
+        assertThat(weather)
+            .isIn(Weather.SUNNY, Weather.CLOUDY, Weather.RAINY)
+
+    }
+
+
+    /*
+    @Test
+    @Ignore
     fun shouldBringUmbrella_givenSunny_returnFalse() {
 
         val satellite = StubSatellite(Weather.SUNNY)
@@ -27,4 +47,5 @@ class WeatherForecastTest {
         assertThat(actual).isFalse
 
     }
+    */
 }
