@@ -14,14 +14,26 @@ class StubSatellite(val anyWhether:Weather):Satellite(){//サテライトを置�
 
 }
 
-/*
-class WeatherFormatter{
-    fun format(weather: Weather):String = "Weather is ${weather}"
+open class WeatherFormatter{
+    open fun format(weather: Weather):String = "Weather is ${weather}"
 }
-*/
+
+class SpyWeatherFormatter: WeatherFormatter(){
+    var weather: Weather? = null
+    var isCalled = false
+
+    override fun format(weather: Weather):String{
+        this.weather = weather
+        isCalled = true
+        return super.format(weather)
+    }
+}
+
+
 
 open class WeatherRecorder{
-    open fun record(weather:Weather){
+    //open fun record(weather:Weather){
+    open fun record(weather:String){
 /*略*/
     }
 }
@@ -30,15 +42,15 @@ class MockWeatherRecorder: WeatherRecorder(){//引数を返さない依存コン
     var weather: Weather? = null
     var isCalled = false
 
-    override fun record(weather: Weather){
+    /*override fun record(weather: Weather){
         this.weather = weather
-        isCalled = true//呼び出しがあった事実を検証のために記録
-    }
+        isCalled = true*///呼び出しがあった事実を検証のために記録
 }
 
 
 class WeatherForecast(val satellite:Satellite,
-                      val recorder: WeatherRecorder){//テストケースからモックに差し替えられるようにコンストラ引数でWeatherRecordオブジェクトをとる。
+                      val recorder: WeatherRecorder,
+                      val formatter: WeatherFormatter){//テストケースからモックに差し替えられるようにコンストラ引数でWeatherRecordオブジェクトをとる。
 
     fun shouldBringUmbrella():Boolean{
         val weather = satellite.getWeather()
@@ -50,7 +62,9 @@ class WeatherForecast(val satellite:Satellite,
 
     fun recordCurrentWeather(){
         val weather = satellite.getWeather()
-        recorder.record(weather)
+        val formatted = formatter.format(weather)
+        recorder.record(formatted)
+        //recorder.record(weather)
             //戻り値を持たないので、外部からは処理の完了が検証できない。
             //メソッドが内部で呼ばれたことを確認して、テスト成功とする。
             //依存コンポーネントであるWeatherRecorderをモックに差し替える。
