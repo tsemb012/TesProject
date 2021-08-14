@@ -4,6 +4,9 @@ open class Satellite {
     open fun getWeather():Weather{
         return Weather.RAINY
     }
+    open fun getWeather(latitude:Double,longitude:Double):Weather{
+        return Weather.RAINY
+    }
 }
 
 class StubSatellite(val anyWhether:Weather):Satellite(){//サテライトを置き換えるスタブ

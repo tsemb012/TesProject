@@ -5,8 +5,8 @@ class WeatherForecastSecond(
         val recorder:WeatherRecorder,
         val formatter:WeatherFormatter) {
 
-    fun shouldBringUmbrella():Boolean{
-        val weather = satellite.getWeather()
+    fun shouldBringUmbrella(latitude:Double, longitude:Double):Boolean{
+        val weather = satellite.getWeather(latitude, longitude)
         return when(weather){
             Weather.SUNNY,Weather.CLOUDY -> false
             Weather.RAINY -> true
